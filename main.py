@@ -2,12 +2,19 @@
 
 from database import Database
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
-
+load_dotenv()
 
 def startSystem():
     # Create an instance of the Database class with the appropriate connection parameters.
-    db = Database(host="localhost", user="root", password="password", database="BD240226157")
+    db = Database(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
+    )
     
     db.connect()
     
