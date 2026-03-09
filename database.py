@@ -33,18 +33,29 @@ class Database:
             self.connection.close()
             print("Disconnected from the database")
     # This method executes a given SQL query and returns the results. It checks if the connection is active before executing the query.
-    def executeQuery(self, query):
+    def executeQuery(self, query, values=None):
         if not self.connection or not self.connection.is_connected(): 
             print("Not connected to the database")
             return None
         
         cursor = self.connection.cursor()
+        
         try:
-            cursor.execute(query)
-            result = cursor.fetchall()
-            return result
-        except Error as e:
-            print(f"Error while executing query: {e}")
+            cursor.execute(query, values) # Executes the query with the provided values (if any)
+            
+            # If the query is a SELECT statement, it fetches and returns the results.
+            if query.strip().upper().startswith("SELECT"):
+                result = cursor.fetchall()
+                return result
+            else:
+                self.connection.commit() # Commits the transaction for non-SELECT queries
+                print("Query executed successfully")
+                return None
+            
+        except Error as error:
+            print(f"Error while executing query: {error}")
             return None
+        
         finally:
-            cursor.close()
+            cursor.close() # Closes the cursor after executing the query
+              
