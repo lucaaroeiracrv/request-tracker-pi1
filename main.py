@@ -1,43 +1,80 @@
-# main.py   
-
-from database import Database
-from datetime import datetime
-from dotenv import load_dotenv
+import logging
 import os
+from dotenv import load_dotenv
+from database import Database, DatabaseError
+from services import register_user, login_user
 
 load_dotenv()
 
-def startSystem():
-    # Create an instance of the Database class with the appropriate connection parameters.
-    db = Database(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
-    
-    db.connect()
-    
-    print("Welcome to the system!")
-    
-    # Define the SQL query to create the users table if it does not already exist. 
-    createUserTableQuery = """
-    CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        phone VARCHAR(20)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s"
+)
+
+def get_env_or_raise(key: str) -> str:
+    value = os.getenv(key)
+    if not value:
+        raise ValueError(f"Variável de ambiente {key} não definida.")
+    return value
+
+def main_menu():
+    print("\n===== MENU =====")
+    print("1 - Cadastrar usuário")
+    print("2 - Login")
+    print("0 - Sair")
+
+def logged_menu(user):
+    print(f"\n===== LOGADO COMO {user['name']} =====")
+    print("9 - Logout")
+
+def start_system():
+    try:
+        db = Database(
+            host=get_env_or_raise("DB_HOST"),
+            user=get_env_or_raise("DB_USER"),
+            password=get_env_or_raise("DB_PASSWORD"),
+            database=get_env_or_raise("DB_NAME"),
+        )
+
+        create_user_table_query = """
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            phone VARCHAR(20)
         );
         """
-        
-        # Execute the query to create the users table in the database.
-    db.executeQuery(createUserTableQuery)
-        
-    print("Users table created successfully.")
-        
-    db.disconnect()
 
-# The main entry point of the program. When the script is run directly, it calls the startSystem function to initialize the system and manage the database connection.       
+        with db:
+            db.execute_query(create_user_table_query)
+
+            logged_user = None
+            while True:
+                if not logged_user:
+                    main_menu()
+                    option = input("Escolha: ").strip()
+
+                    if option == "1":
+                        register_user(db)
+                    elif option == "2":
+                        logged_user = login_user(db)
+                    elif option == "0":
+                        break
+                    else:
+                        print("Opção inválida.")
+                else:
+                    logged_menu(logged_user)
+                    option = input("Escolha: ").strip()
+                    if option == "9":
+                        logged_user = None
+                        print("Logout realizado.")
+                    else:
+                        print("Opção inválida.")
+
+        logging.info("Sistema finalizado.")
+    except (DatabaseError, ValueError) as error:
+        logging.error(f"Erro ao iniciar o sistema: {error}")
+
 if __name__ == "__main__":
-    startSystem()
+    start_system()

@@ -1,61 +1,70 @@
-# database.py
-
+import logging
+from typing import Any, Iterable, Optional
 import mysql.connector
-from mysql.connector import Error
+from mysql.connector import Error, MySQLConnection
 
-# This class is responsible for managing the database connection and executing queries.
+logger = logging.getLogger(__name__)
+
+class DatabaseError(Exception):
+    """Erro genérico de banco de dados."""
+    pass
+
 class Database:
-    # The constructor initializes the database connection parameters and sets the connection to None.
-    def __init__(self, host, user, password, database):
-        self.host = host # The hostname of the database server
-        self.user = user # The username to connect to the database
-        self.password = password # The password to connect to the database  
-        self.database = database # The name of the database to connect to
-        self.connection = None # The connection object that will be used to interact with the database
+    def __init__(self, host: str, user: str, password: str, database: str) -> None:
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.connection: Optional[MySQLConnection] = None
 
-    # This method establishes a connection to the database using the provided credentials.
-    def connect(self):
+    def connect(self) -> None:
         try:
             self.connection = mysql.connector.connect(
-                host=self.host, 
-                user=self.user, 
-                password=self.password, 
-                database=self.database                
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database,
             )
-            # If the connection is successful, it prints a confirmation message.
+
             if self.connection.is_connected():
-                print("Connected to the database")
+                logger.info("Connected to the database")
+            else:
+                raise DatabaseError("Failed to connect to the database")
         except Error as error:
-            print(f"Error while connecting to MySQL: {error}")
-    # This method closes the database connection if it is currently open.
-    def disconnect(self): 
+            logger.exception("Erro ao conectar ao MySQL")
+            raise DatabaseError(str(error)) from error
+
+    def disconnect(self) -> None:
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            print("Disconnected from the database")
-    # This method executes a given SQL query and returns the results. It checks if the connection is active before executing the query.
-    def executeQuery(self, query, values=None):
-        if not self.connection or not self.connection.is_connected(): 
-            print("Not connected to the database")
-            return None
-        
+            logger.info("Disconnected from the database")
+
+    def execute_query(self, query: str, values: Optional[Iterable[Any]] = None):
+        if not self.connection or not self.connection.is_connected():
+            raise DatabaseError("Não está conectado ao banco de dados")
+
         cursor = self.connection.cursor()
-        
+
         try:
-            cursor.execute(query, values) # Executes the query with the provided values (if any)
-            
-            # If the query is a SELECT statement, it fetches and returns the results.
+            cursor.execute(query, values)
+
             if query.strip().upper().startswith("SELECT"):
-                result = cursor.fetchall()
-                return result
+                return cursor.fetchall()
             else:
-                self.connection.commit() # Commits the transaction for non-SELECT queries
-                print("Query executed successfully")
+                self.connection.commit()
+                logger.info("Query executada com sucesso")
                 return None
-            
+
         except Error as error:
-            print(f"Error while executing query: {error}")
-            return None
-        
+            logger.exception("Erro ao executar a query")
+            raise DatabaseError(str(error)) from error
+
         finally:
-            cursor.close() # Closes the cursor after executing the query
-              
+            cursor.close()
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.disconnect()
