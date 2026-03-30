@@ -1,5 +1,8 @@
 from auth import hash_password, check_password, is_valid_email, is_valid_password
 
+CATEGORY_OPTIONS = ["TI", "RH", "Financeiro", "Infraestrutura", "Suporte"]
+
+
 def register_user(db):
     name = input("Nome: ").strip()
     email = input("Email: ").strip()
@@ -9,7 +12,10 @@ def register_user(db):
     if not name:
         print("Nome é obrigatório.")
         return
-    if not is_valid_email(email):
+    if not email and not phone:
+        print("Informe pelo menos um meio de contato (email ou telefone).")
+        return
+    if email and not is_valid_email(email):
         print("Email inválido.")
         return
     if not is_valid_password(password):
@@ -19,20 +25,24 @@ def register_user(db):
     password_hash = hash_password(password)
 
     query = """
-        INSERT INTO users (name, email, phone, password_hash)
+        INSERT INTO users (name, email, phone, password)
         VALUES (%s, %s, %s, %s)
     """
     try:
-        db.execute_query(query, (name, email, phone, password_hash))
+        db.execute_query(query, (name, email if email else None, phone if phone else None, password_hash))
         print("Usuário cadastrado com sucesso!")
     except Exception as e:
-        print(f"Erro ao cadastrar usuário: {e}")
+        if "1062" in str(e) or "UNIQUE" in str(e).upper():
+            print("Erro ao cadastrar usuário: email já cadastrado.")
+        else:
+            print(f"Erro ao cadastrar usuário: {e}")
+
 
 def login_user(db):
     email = input("Email: ").strip()
     password = input("Senha: ").strip()
 
-    query = "SELECT id, name, password_hash FROM users WHERE email = %s"
+    query = "SELECT id, name, password FROM users WHERE email = %s"
     result = db.execute_query(query, (email,))
 
     if not result:
@@ -47,3 +57,228 @@ def login_user(db):
     else:
         print("Senha incorreta.")
         return None
+
+
+def list_users(db):
+    query = "SELECT id, name, email, phone FROM users ORDER BY name"
+    users = db.execute_query(query)
+
+    if not users:
+        print("Nenhum usuário cadastrado.")
+        return []
+
+    print("\nUsuários cadastrados:")
+    print("ID | Nome | Email | Telefone")
+    for u in users:
+        print(f"{u[0]} | {u[1]} | {u[2] or '-'} | {u[3] or '-'}")
+
+    return users
+
+
+def select_user(db):
+    users = list_users(db)
+    if not users:
+        return None
+
+    try:
+        user_id = int(input("Digite o ID do usuário responsável pela solicitação: ").strip())
+    except ValueError:
+        print("ID inválido.")
+        return None
+
+    for u in users:
+        if u[0] == user_id:
+            return u
+
+    print("Usuário não encontrado.")
+    return None
+
+
+def calculate_priority(urgency, impact):
+    total = urgency + impact
+    if total <= 3:
+        return "Baixa"
+    elif total <= 7:
+        return "Media"
+    else:
+        return "Alta"
+
+
+def create_request(db):
+    user = select_user(db)
+    if not user:
+        return
+
+    print("\nCategorias disponíveis:")
+    for i, c in enumerate(CATEGORY_OPTIONS, start=1):
+        print(f"{i} - {c}")
+
+    try:
+        category_choice = int(input("Escolha categoria: ").strip())
+        category = CATEGORY_OPTIONS[category_choice - 1]
+    except (ValueError, IndexError):
+        print("Categoria inválida.")
+        return
+
+    description = input("Descrição da solicitação (obrigatório): ").strip()
+    if not description:
+        print("Descrição é obrigatória.")
+        return
+
+    try:
+        urgency = int(input("Urgência (1 a 5): ").strip())
+        impact = int(input("Impacto (1 a 5): ").strip())
+    except ValueError:
+        print("Urgência e impacto devem ser números inteiros.")
+        return
+
+    if not (1 <= urgency <= 5 and 1 <= impact <= 5):
+        print("Urgência e impacto devem estar entre 1 e 5.")
+        return
+
+    priority = calculate_priority(urgency, impact)
+    status = "Aberta"
+
+    query = """
+        INSERT INTO requests (user_id, category, description, urgency, impact, priority, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    try:
+        db.execute_query(query, (user[0], category, description, urgency, impact, priority, status))
+        print(f"Solicitação criada com sucesso! Prioridade: {priority}")
+    except Exception as e:
+        print(f"Erro ao criar solicitação: {e}")
+
+
+def get_requests(db, where_clause=None, params=None):
+    query = """
+        SELECT r.id, u.name, r.category, r.description, r.priority, r.status, r.created_at
+        FROM requests r
+        JOIN users u ON r.user_id = u.id
+    """
+    if where_clause:
+        query += " WHERE " + where_clause
+
+    query += " ORDER BY r.created_at DESC"
+    return db.execute_query(query, params or ())
+
+
+def list_requests(db):
+    requests = get_requests(db)
+    if not requests:
+        print("Nenhuma solicitação encontrada.")
+        return
+
+    print("\nSolicitações:")
+    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    for r in requests:
+        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+
+
+def list_requests_by_status(db):
+    status = input("Status (Aberta/Em andamento/Fechada): ").strip().title()
+    if status not in ["Aberta", "Em andamento", "Fechada"]:
+        print("Status inválido.")
+        return
+
+    requests = get_requests(db, "r.status = %s", (status,))
+    if not requests:
+        print(f"Nenhuma solicitação com status {status}.")
+        return
+
+    print(f"\nSolicitações com status {status}:")
+    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    for r in requests:
+        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+
+
+def list_requests_by_priority(db):
+    priority = input("Prioridade (Baixa/Média/Alta): ").strip().title()
+    if priority not in ["Baixa", "Media", "Alta"]:
+        print("Prioridade inválida.")
+        return
+
+    requests = get_requests(db, "r.priority = %s", (priority,))
+    if not requests:
+        print(f"Nenhuma solicitação com prioridade {priority}.")
+        return
+
+    print(f"\nSolicitações com prioridade {priority}:")
+    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    for r in requests:
+        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+
+
+def list_requests_by_user(db):
+    user = select_user(db)
+    if not user:
+        return
+
+    requests = get_requests(db, "r.user_id = %s", (user[0],))
+    if not requests:
+        print(f"Nenhuma solicitação para o usuário {user[1]}.")
+        return
+
+    print(f"\nSolicitações do usuário {user[1]}:")
+    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    for r in requests:
+        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+
+
+def update_request_status(db):
+    try:
+        request_id = int(input("ID da solicitação: ").strip())
+    except ValueError:
+        print("ID inválido.")
+        return
+
+    result = db.execute_query("SELECT status FROM requests WHERE id = %s", (request_id,))
+    if not result:
+        print("Solicitação não encontrada.")
+        return
+
+    current = result[0][0]
+    print(f"Status atual: {current}")
+
+    if current == "Fechada":
+        print("Não é possível reabrir solicitação fechada.")
+        return
+
+    status = input("Novo status (Em andamento/Fechada): ").strip().title()
+    if status not in ["Em andamento", "Fechada"]:
+        print("Status inválido.")
+        return
+
+    if current == "Aberta" and status == "Fechada":
+        pass
+    if current == "Em andamento" and status == "Aberta":
+        print("Transição inválida: não pode voltar de Em andamento para Aberta.")
+        return
+
+    db.execute_query("UPDATE requests SET status = %s, updated_at = NOW() WHERE id = %s", (status, request_id))
+    print("Status atualizado com sucesso.")
+
+
+def stats_by_status(db):
+    query = "SELECT status, COUNT(*) FROM requests GROUP BY status"
+    rows = db.execute_query(query)
+    if not rows:
+        print("Nenhuma solicitação cadastrada.")
+        return
+
+    print("\nEstatísticas por status:")
+    for s, c in rows:
+        print(f"{s}: {c}")
+
+
+def stats_by_priority(db):
+    query = "SELECT priority, COUNT(*) FROM requests GROUP BY priority"
+    rows = db.execute_query(query)
+    if not rows:
+        print("Nenhuma solicitação cadastrada.")
+        return
+
+    print("\nEstatísticas por prioridade:")
+    for p, c in rows:
+        print(f"{p}: {c}")
