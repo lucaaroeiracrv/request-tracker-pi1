@@ -1,14 +1,17 @@
+# services.py - contains the main business logic for the request tracking system, including user registration, login, request creation, and listing requests based on various criteria.
 from auth import hash_password, check_password, is_valid_email, is_valid_password
 
+# predefined list of available request categories
 CATEGORY_OPTIONS = ["TI", "RH", "Financeiro", "Infraestrutura", "Suporte"]
 
-
-def register_user(db):
+def register_user(db):# handles user registration
+    # collect user input
     name = input("Nome: ").strip()
     email = input("Email: ").strip()
     phone = input("Telefone (opcional): ").strip()
     password = input("Senha (mín. 6 caracteres): ").strip()
 
+    # validate required fields
     if not name:
         print("Nome é obrigatório.")
         return
@@ -22,36 +25,37 @@ def register_user(db):
         print("Senha muito curta.")
         return
 
-    password_hash = hash_password(password)
+    # hash the password before storing it
+    password_hash = hash_password(password) 
 
+    # SQL query to insert a new user
     query = """
         INSERT INTO users (name, email, phone, password)
         VALUES (%s, %s, %s, %s)
     """
-    try:
+    try: # execute insert with safe parameter binding
         db.execute_query(query, (name, email if email else None, phone if phone else None, password_hash))
         print("Usuário cadastrado com sucesso!")
     except Exception as e:
-        if "1062" in str(e) or "UNIQUE" in str(e).upper():
+        if "1062" in str(e) or "UNIQUE" in str(e).upper(): # handle duplicate email constraint
             print("Erro ao cadastrar usuário: email já cadastrado.")
         else:
             print(f"Erro ao cadastrar usuário: {e}")
 
-
+# authenticates a user using email and password
 def login_user(db):
     email = input("Email: ").strip()
     password = input("Senha: ").strip()
 
-    query = "SELECT id, name, password FROM users WHERE email = %s"
+    query = "SELECT id, name, password FROM users WHERE email = %s" # retrieve user credentials by email
     result = db.execute_query(query, (email,))
 
-    if not result:
+    if not result: # check if user exist
         print("Usuário não encontrado.")
         return None
+    user_id, name, password_hash = result[0] # unpack the result to get user id, name, and password hash
 
-    user_id, name, password_hash = result[0]
-
-    if check_password(password, password_hash):
+    if check_password(password, password_hash): # compare provided password with stored hash
         print(f"Login OK! Bem-vindo, {name}")
         return {"id": user_id, "name": name, "email": email}
     else:
@@ -59,7 +63,7 @@ def login_user(db):
         return None
 
 
-def list_users(db):
+def list_users(db): # lists all registered users
     query = "SELECT id, name, email, phone FROM users ORDER BY name"
     users = db.execute_query(query)
 
@@ -75,18 +79,18 @@ def list_users(db):
     return users
 
 
-def select_user(db):
+def select_user(db): # allows selection of a user from the list
     users = list_users(db)
     if not users:
         return None
-
-    try:
+ 
+    try: # validate user ID input
         user_id = int(input("Digite o ID do usuário responsável pela solicitação: ").strip())
     except ValueError:
         print("ID inválido.")
         return None
 
-    for u in users:
+    for u in users: # search for the selected user
         if u[0] == user_id:
             return u
 
@@ -94,7 +98,7 @@ def select_user(db):
     return None
 
 
-def calculate_priority(urgency, impact):
+def calculate_priority(urgency, impact): # calculates request priority based on urgency and impact
     total = urgency + impact
     if total <= 3:
         return "Baixa"
@@ -104,41 +108,44 @@ def calculate_priority(urgency, impact):
         return "Alta"
 
 
-def create_request(db):
-    user = select_user(db)
+def create_request(db): # creates a new request
+    user = select_user(db) # select the user related to the request
     if not user:
         return
 
-    print("\nCategorias disponíveis:")
+    print("\nCategorias disponíveis:") # display available categories
     for i, c in enumerate(CATEGORY_OPTIONS, start=1):
         print(f"{i} - {c}")
 
-    try:
+    try:   # validate category selection
         category_choice = int(input("Escolha categoria: ").strip())
         category = CATEGORY_OPTIONS[category_choice - 1]
     except (ValueError, IndexError):
         print("Categoria inválida.")
         return
-
+    
+    # validate description
     description = input("Descrição da solicitação (obrigatório): ").strip()
     if not description:
         print("Descrição é obrigatória.")
         return
 
-    try:
+    try: # collect urgency and impact values
         urgency = int(input("Urgência (1 a 5): ").strip())
         impact = int(input("Impacto (1 a 5): ").strip())
     except ValueError:
         print("Urgência e impacto devem ser números inteiros.")
         return
 
-    if not (1 <= urgency <= 5 and 1 <= impact <= 5):
+    if not (1 <= urgency <= 5 and 1 <= impact <= 5): # validate urgency and impact ranges
         print("Urgência e impacto devem estar entre 1 e 5.")
         return
-
+    
+    # calculate derived fields
     priority = calculate_priority(urgency, impact)
     status = "Aberta"
 
+    # insert the request into the database
     query = """
         INSERT INTO requests (user_id, category, description, urgency, impact, priority, status)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -150,8 +157,7 @@ def create_request(db):
     except Exception as e:
         print(f"Erro ao criar solicitação: {e}")
 
-
-def get_requests(db, where_clause=None, params=None):
+def get_requests(db, where_clause=None, params=None): # retrieves requests with an optional filter condition
     query = """
         SELECT r.id, u.name, r.category, r.description, r.priority, r.status, r.created_at
         FROM requests r
@@ -163,8 +169,7 @@ def get_requests(db, where_clause=None, params=None):
     query += " ORDER BY r.created_at DESC"
     return db.execute_query(query, params or ())
 
-
-def list_requests(db):
+def list_requests(db): # lists all requests
     requests = get_requests(db)
     if not requests:
         print("Nenhuma solicitação encontrada.")
@@ -176,7 +181,7 @@ def list_requests(db):
         print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
 
 
-def list_requests_by_status(db):
+def list_requests_by_status(db): # lists requests filtered by status
     status = input("Status (Aberta/Em andamento/Fechada): ").strip().title()
     if status not in ["Aberta", "Em andamento", "Fechada"]:
         print("Status inválido.")
@@ -193,7 +198,7 @@ def list_requests_by_status(db):
         print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
 
 
-def list_requests_by_priority(db):
+def list_requests_by_priority(db): # lists requests filtered by priority
     priority = input("Prioridade (Baixa/Média/Alta): ").strip().title()
     if priority not in ["Baixa", "Media", "Alta"]:
         print("Prioridade inválida.")
@@ -210,7 +215,7 @@ def list_requests_by_priority(db):
         print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
 
 
-def list_requests_by_user(db):
+def list_requests_by_user(db): # lists requests created by a specific user
     user = select_user(db)
     if not user:
         return
@@ -226,13 +231,14 @@ def list_requests_by_user(db):
         print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
 
 
-def update_request_status(db):
+def update_request_status(db): # updates the status of an existing request
     try:
         request_id = int(input("ID da solicitação: ").strip())
     except ValueError:
         print("ID inválido.")
         return
 
+    # retrieve current status
     result = db.execute_query("SELECT status FROM requests WHERE id = %s", (request_id,))
     if not result:
         print("Solicitação não encontrada.")
@@ -241,26 +247,28 @@ def update_request_status(db):
     current = result[0][0]
     print(f"Status atual: {current}")
 
-    if current == "Fechada":
+    if current == "Fechada": # prevent reopening closed requests
         print("Não é possível reabrir solicitação fechada.")
         return
 
+    # validate new status input
     status = input("Novo status (Em andamento/Fechada): ").strip().title()
     if status not in ["Em andamento", "Fechada"]:
         print("Status inválido.")
         return
 
-    if current == "Aberta" and status == "Fechada":
+    if current == "Aberta" and status == "Fechada": # prevent invalid status transitions
         pass
     if current == "Em andamento" and status == "Aberta":
         print("Transição inválida: não pode voltar de Em andamento para Aberta.")
         return
 
+    # update status and timestamp
     db.execute_query("UPDATE requests SET status = %s, updated_at = NOW() WHERE id = %s", (status, request_id))
     print("Status atualizado com sucesso.")
 
 
-def stats_by_status(db):
+def stats_by_status(db): # displays statistics grouped by request status
     query = "SELECT status, COUNT(*) FROM requests GROUP BY status"
     rows = db.execute_query(query)
     if not rows:
@@ -272,7 +280,7 @@ def stats_by_status(db):
         print(f"{s}: {c}")
 
 
-def stats_by_priority(db):
+def stats_by_priority(db): # displays statistics grouped by request priority
     query = "SELECT priority, COUNT(*) FROM requests GROUP BY priority"
     rows = db.execute_query(query)
     if not rows:

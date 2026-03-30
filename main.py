@@ -1,3 +1,4 @@
+# main.py - Main entry point for the Request Tracker application
 import logging
 import os
 from dotenv import load_dotenv
@@ -16,26 +17,28 @@ from services import (
     stats_by_priority,
 )
 
-load_dotenv()
+load_dotenv() # load environment variables from a .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) 
 
+# configure global logging settings, defines the level, message format, and date/time.
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s"
+    level=logging.INFO, # set the logging level to INFO, which means that all messages at this level and above (WARNING, ERROR, CRITICAL) will be logged.
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s" 
 )
 
-def get_env_or_raise(key: str) -> str:
+def get_env_or_raise(key: str) -> str: # helper function for retrieving an environment variable.
     value = os.getenv(key)
     if not value:
-        raise ValueError(f"Variável de ambiente {key} não definida.")
+        raise ValueError(f"Variável de ambiente {key} não definida.") # throws an error if the variable does not exist.
     return value
 
-def main_menu():
+
+def main_menu(): # function to display the main menu options for the user when they are not logged in.
     print("\n===== MENU =====")
     print("1 - Cadastrar usuário")
     print("2 - Login")
     print("0 - Sair")
 
-def logged_menu(user):
+def logged_menu(user): # function to display the menu options for the user when they are logged in
     print(f"\n===== LOGADO COMO {user['name']} =====")
     print("1 - Cadastrar solicitação")
     print("2 - Listar usuários")
@@ -48,8 +51,9 @@ def logged_menu(user):
     print("9 - Estatísticas por prioridade")
     print("0 - Logout")
 
-def start_system():
+def start_system(): # main function to start the system
     try:
+        # create the database instance using environment variables for connection parameters, then create the necessary tables if they do not exist.
         db = Database(
             host=get_env_or_raise("DB_HOST"),
             user=get_env_or_raise("DB_USER"),
@@ -57,6 +61,7 @@ def start_system():
             database=get_env_or_raise("DB_NAME"),
         )
 
+        # SQL query to create the users table if it does not exist
         create_user_table_query = """
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +71,7 @@ def start_system():
             phone VARCHAR(20)
         );
         """
-
+        # SQL query to create the requests table if it does not exist
         create_request_table_query = """
         CREATE TABLE IF NOT EXISTS requests (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -83,13 +88,15 @@ def start_system():
         );
         """
 
-        with db:
+        with db:# use the database connection as a context manager
+            # ensures that the tables exist
             db.execute_query(create_user_table_query)
             db.execute_query(create_request_table_query)
 
+            # stores the logged-in user (None = nobody logged in)
             logged_user = None
-            while True:
-                if not logged_user:
+            while True: # main loop
+                if not logged_user: # if no user is logged in, show the main menu
                     main_menu()
                     option = input("Escolha: ").strip()
 
@@ -101,7 +108,7 @@ def start_system():
                         break
                     else:
                         print("Opção inválida.")
-                else:
+                else: # if a user is logged in, show the logged-in menu with more options
                     logged_menu(logged_user)
                     option = input("Escolha: ").strip()
 
@@ -133,5 +140,5 @@ def start_system():
     except (DatabaseError, ValueError) as error:
         logging.error(f"Erro ao iniciar o sistema: {error}")
 
-if __name__ == "__main__":
+if __name__ == "__main__": # ensures that the system will only start if this file is executed directly.
     start_system()
