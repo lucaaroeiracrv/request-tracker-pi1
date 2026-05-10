@@ -191,6 +191,8 @@ A regra é determinística: mesmas entradas geram a mesma prioridade.
 
 Projeto desenvolvido **exclusivamente para fins educacionais** como parte de atividades acadêmicas.
 
+---
+
 #  Testes realizados
 
 Foram realizados testes de consistência para validar o funcionamento do sistema:
