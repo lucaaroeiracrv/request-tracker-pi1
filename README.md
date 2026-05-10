@@ -190,3 +190,22 @@ A regra é determinística: mesmas entradas geram a mesma prioridade.
 # 📄 Licença
 
 Projeto desenvolvido **exclusivamente para fins educacionais** como parte de atividades acadêmicas.
+
+#  Testes realizados
+
+Foram realizados testes de consistência para validar o funcionamento do sistema:
+
+- Cadastro de usuário
+- Login de usuário
+- Abertura de solicitação
+- Cálculo automático de prioridade
+- Atualização de status
+- Consultas/listagens
+- Estatísticas por status e prioridade
+- Persistência dos dados no MySQL após reiniciar o sistema
+
+##  Resultado
+
+O fluxo principal foi testado com sucesso:
+
+Cadastro → Login → Abertura de solicitação → Consulta → Atualização de status → Estatísticas.
