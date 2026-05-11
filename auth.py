@@ -2,7 +2,7 @@
 import bcrypt
 import re
 
-EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$" # regex pattern to validate email addresses (basic validation, can be improved for more complex cases)
+EMAIL_REGEX = r"^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9]+(?:[._%+-][A-Za-z0-9]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$" # regex pattern to validate email addresses (basic validation, can be improved for more complex cases)
 
 # function to hash a password using bcrypt, which is a secure hashing algorithm designed for password hashing. It generates a salt and hashes the password with it, returning the hashed password as a string.
 def hash_password(password: str) -> str:
