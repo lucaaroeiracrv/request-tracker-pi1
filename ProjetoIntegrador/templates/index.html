@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/frontend/public/favicon.ico" />
+  <title>Sistema de Monitoramento SENAI — Cadastro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- OVERLAY (fecha menu ao clicar) -->
+  <div id="overlay" class="overlay" tabindex="-1" aria-hidden="true"></div>
+
+  <!-- HEADER --> 
+    <header class="site-header">
+        <div class="header-inner">
+            <h1 class="site-title">
+            Sistema de Controle de Solicitações Corporativas (SCSC)
+            </h1>
+        </div>
+
+        <nav class="navbar">
+            <ul class="menu">
+            <li><a href="/public/pages/index.html">Home</a></li>
+
+            <li class="dropdown">
+                <a href="/public/pages/produtos.html">Solicitações</a>
+                <ul class="dropdown-content">
+                <li><a href="/public/pages/escritorio.html">Em aberto</a></li>
+                <li><a href="/public/pages/papelaria.html">Em andamento</a></li>
+                <li><a href="/public/pages/informatica.html">Finalizadas</a></li>
+                </ul>
+            </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+      <section class="card auth-card">
+        <h2>Cadastro</h2>
+
+        <form id="cadForm" autocomplete="off">
+          <label for="nome">Nome Completo</label>
+          <input id="nome" name="nome" type="text" required>
+
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" required>
+
+          <label for="senha">Senha</label>
+          <input id="senha" name="senha" type="password" required minlength="6">
+
+          <button type="submit" class="btn primary">Cadastrar</button>
+
+          <div class="links">
+            <a href="login.html">Já tenho conta, ir para Login</a>
+          </div>
+        </form>
+        <div id="statusMessage" class="status" aria-live="polite"></div>
+      </section>
+    </main>
+
+  <footer class="site-footer">
+    <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas (SCSC)</p>
+  </footer>
