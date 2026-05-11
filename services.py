@@ -1,5 +1,6 @@
 # services.py - contains the main business logic for the request tracking system, including user registration, login, request creation, and listing requests based on various criteria.
 from auth import hash_password, check_password, is_valid_email, is_valid_password
+import pwinput
 
 # predefined list of available request categories
 CATEGORY_OPTIONS = ["TI", "RH", "Financeiro", "Infraestrutura", "Suporte"]
@@ -9,7 +10,7 @@ def register_user(db):# handles user registration
     name = input("Nome: ").strip()
     email = input("Email: ").strip()
     phone = input("Telefone (opcional): ").strip()
-    password = input("Senha (mín. 6 caracteres): ").strip()
+    password = pwinput.pwinput(prompt="Senha (mín. 6 caracteres): ").strip()
 
     # validate required fields
     if not name:
@@ -30,7 +31,7 @@ def register_user(db):# handles user registration
 
     # SQL query to insert a new user
     query = """
-        INSERT INTO users (name, email, phone, password)
+        INSERT INTO users (name, email, phone, password_hash)
         VALUES (%s, %s, %s, %s)
     """
     try: # execute insert with safe parameter binding
@@ -45,9 +46,9 @@ def register_user(db):# handles user registration
 # authenticates a user using email and password
 def login_user(db):
     email = input("Email: ").strip()
-    password = input("Senha: ").strip()
+    password = pwinput.pwinput(prompt="Senha: ").strip()
 
-    query = "SELECT id, name, password FROM users WHERE email = %s" # retrieve user credentials by email
+    query = "SELECT id, name, password_hash FROM users WHERE email = %s" # retrieve user credentials by email
     result = db.execute_query(query, (email,))
 
     if not result: # check if user exist
