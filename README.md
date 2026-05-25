@@ -71,6 +71,7 @@ Integridade referencial e restrições:
 
 # 🏗️ Estrutura do Projeto
 
+<pre>
 📁 request-tracker-pi1
 │
 ├── main.py            # Arquivo principal do sistema, gerencia o fluxo de menus CLI e o sistema de logs.
@@ -82,7 +83,7 @@ Integridade referencial e restrições:
 ├── .env               # Arquivo de configuração de variáveis de ambiente (Configuração local).
 ├── .gitignore         # Instruções de exclusão de arquivos privados para o Git.
 └── README.md          # Guia do repositório contendo a documentação técnica resumida.
----
+</pre>
 
 # ⚙️ Configuração do Ambiente
 
