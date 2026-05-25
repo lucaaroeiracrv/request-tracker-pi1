@@ -82,7 +82,6 @@ Integridade referencial e restrições:
 ├── .env               # Arquivo de configuração de variáveis de ambiente (Configuração local).
 ├── .gitignore         # Instruções de exclusão de arquivos privados para o Git.
 └── README.md          # Guia do repositório contendo a documentação técnica resumida.
-
 ---
 
 # ⚙️ Configuração do Ambiente
