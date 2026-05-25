@@ -177,9 +177,9 @@ def list_requests(db): # lists all requests
         return
 
     print("\nSolicitações:")
-    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    print(f"{'ID':<5} | {'Solicitante':<20} | {'Categoria':<15} | {'Prioridade':<12} | {'Status':<12} | {'Data':<15}\n")
     for r in requests:
-        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+        print(f"{r[0]:<5} | {r[1]:<20} | {r[2]:<15} | {r[4]:<12} | {r[5]:<12} | {r[6]}")
 
 
 def list_requests_by_status(db): # lists requests filtered by status
@@ -194,9 +194,9 @@ def list_requests_by_status(db): # lists requests filtered by status
         return
 
     print(f"\nSolicitações com status {status}:")
-    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    print(f"{'ID':<5} | {'Solicitante':<20} | {'Categoria':<15} | {'Prioridade':<12} | {'Status':<12} | {'Data':<15}\n")
     for r in requests:
-        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+        print(f"{r[0]:<5} | {r[1]:<20} | {r[2]:<15} | {r[4]:<12} | {r[5]:<12} | {r[6]}")
 
 
 def list_requests_by_priority(db): # lists requests filtered by priority
@@ -211,9 +211,9 @@ def list_requests_by_priority(db): # lists requests filtered by priority
         return
 
     print(f"\nSolicitações com prioridade {priority}:")
-    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    print(f"{'ID':<5} | {'Solicitante':<20} | {'Categoria':<15} | {'Prioridade':<12} | {'Status':<12} | {'Data':<15}\n")
     for r in requests:
-        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+        print(f"{r[0]:<5} | {r[1]:<20} | {r[2]:<15} | {r[4]:<12} | {r[5]:<12} | {r[6]}")
 
 
 def list_requests_by_user(db): # lists requests created by a specific user
@@ -227,9 +227,9 @@ def list_requests_by_user(db): # lists requests created by a specific user
         return
 
     print(f"\nSolicitações do usuário {user[1]}:")
-    print("ID | Solicitante | Categoria | Prioridade | Status | Data")
+    print(f"{'ID':<5} | {'Solicitante':<20} | {'Categoria':<15} | {'Prioridade':<12} | {'Status':<12} | {'Data':<15}\n")
     for r in requests:
-        print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
+        print(f"{r[0]:<5} | {r[1]:<20} | {r[2]:<15} | {r[4]:<12} | {r[5]:<12} | {r[6]}")
 
 
 def update_request_status(db): # updates the status of an existing request
