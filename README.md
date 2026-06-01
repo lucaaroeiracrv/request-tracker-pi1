@@ -1,4 +1,4 @@
-# 📌 SCSC - Sistema de Controle e Solicitação Corporativa
+# SCSC - Sistema de Controle e Solicitação Corporativa
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat\&logo=python\&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=flat\&logo=mysql\&logoColor=white)
@@ -7,7 +7,7 @@
 
 ---
 
-# 📖 Descrição do Projeto
+# Descrição do Projeto
 
 O **SCSC (Sistema de Controle e Solicitação Corporativa)** é um sistema desenvolvido para o **Projeto Integrador I (PI1)**do curso de Sistemas de Informação da **PUC-Campinas**.
 
@@ -22,7 +22,7 @@ O objetivo do sistema é **centralizar, organizar e controlar todas as solicita�
 
 ---
 
-# 🎯 Objetivos do Sistema
+# Objetivos do Sistema
 
 * Permitir cadastro de usuários
 * Registrar solicitações internas
@@ -33,7 +33,7 @@ O objetivo do sistema é **centralizar, organizar e controlar todas as solicita�
 
 ---
 
-# 🛠️ Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 * **Python**Linguagem principal utilizada para o desenvolvimento de toda a lógica de negócios, validações de dados e interface via linha de comando (CLI).
 * **MySQL**Sistema Gerenciador de Banco de Dados (SGBD) relacional encarregado da persistência segura, consistência e integridade de todos os dados do sistema
@@ -41,7 +41,7 @@ O objetivo do sistema é **centralizar, organizar e controlar todas as solicita�
 * **Trello** Plataforma utilizada para a gestão, divisão de tarefas do projeto através de um quadro Kanban e mapeamento de sprints.
 
 
-## �🧾 Regras de Prioridade
+## Regras de Prioridade
 
 Prioridade é calculada como `urgency + impact`:
 
@@ -51,7 +51,7 @@ Prioridade é calculada como `urgency + impact`:
 
 A regra é determinística: mesmas entradas geram a mesma prioridade.
 
-## 🗂️ Modelagem do Banco
+## Modelagem do Banco
 
 Entidades principais:
 
@@ -69,7 +69,7 @@ Integridade referencial e restrições:
 
 ---
 
-# 🏗️ Estrutura do Projeto
+# Estrutura do Projeto
 
 <pre>
 📁 request-tracker-pi1
@@ -85,7 +85,7 @@ Integridade referencial e restrições:
 └── README.md          # Guia do repositório contendo a documentação técnica resumida.
 </pre>
 
-# ⚙️ Configuração do Ambiente
+# Configuração do Ambiente
 
 Este projeto utiliza **variáveis de ambiente** para proteger credenciais de acesso ao banco de dados.
 
@@ -100,14 +100,14 @@ DB_PASSWORD=sua_senha
 DB_NAME=seu_banco
 ```
 
-⚠️ **Importante:**
+**Importante:**
 O arquivo `.env` não deve ser enviado para o GitHub. Ele já está listado no `.gitignore`.
 
 ---
 
-# 🚀 Como Executar o Projeto
+# Como Executar o Projeto
 
-## 1️⃣ Clonar o repositório
+## 1 - Clonar o repositório
 
 ```bash
 git clone https://github.com/seu-usuario/seu-repositorio.git
@@ -115,7 +115,7 @@ git clone https://github.com/seu-usuario/seu-repositorio.git
 
 ---
 
-## 2️⃣ Entrar na pasta do projeto
+## 2️ -  Entrar na pasta do projeto
 
 ```bash
 cd request-tracker-pi1
@@ -123,7 +123,7 @@ cd request-tracker-pi1
 
 ---
 
-## 3️⃣ Instalar as dependências
+## 3️ - Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
@@ -131,13 +131,13 @@ pip install -r requirements.txt
 
 ---
 
-## 4️⃣ Configurar as variáveis de ambiente
+## 4️ - Configurar as variáveis de ambiente
 
 Crie o arquivo `.env` baseado no `.env.example` e configure as credenciais do banco de dados.
 
 ---
 
-## 5️⃣ Executar o sistema
+## 5️ - Executar o sistema
 
 ```bash
 python main.py
@@ -145,7 +145,7 @@ python main.py
 
 ---
 
-## 📋 Schema do Banco de Dados
+## Schema do Banco de Dados
 
 O arquivo `schema.sql` contém o script DDL para criar o banco de dados e tabelas. Execute-o no MySQL Workbench antes de rodar o sistema pela primeira vez **(SE NECESSÁRIO)**.
 
@@ -156,9 +156,9 @@ SOURCE schema.sql;
 
 ---
 
-# 📊 Status do Projeto
+# Status do Projeto
 
-✅ **Funcional e testado**
+**Funcional e testado**
 
 Este projeto está sendo desenvolvido como parte do **Projeto Integrador I (PI1)**.
 
@@ -197,7 +197,7 @@ O fluxo principal foi testado com sucesso:
 
 Cadastro → Login → Abertura de solicitação → Consulta → Atualização de status → Estatísticas.
 
-# 👥 Integrantes da Equipe
+# Integrantes da Equipe
 
 Conforme o registro de evolução, divisão de tarefas em quadro Kanban no Trello e histórico autoral de desenvolvimento na plataforma GitHub, a equipe responsável pela concepção, codificação e documentação do SCSC é composta por:
 
@@ -208,6 +208,6 @@ Conforme o registro de evolução, divisão de tarefas em quadro Kanban no Trell
 * **Luca Aroeira Crivelaro**
 * **Samuel Bueno da Silva** 
 
-# 📄 Licença
+# Licença
 
 Projeto desenvolvido **exclusivamente para fins educacionais** como parte de atividades acadêmicas.
