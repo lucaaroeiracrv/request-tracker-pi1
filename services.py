@@ -7,7 +7,7 @@ import pwinput
 # Predefined list of available request categories
 CATEGORY_OPTIONS = ["TI", "RH", "Financeiro", "Infraestrutura", "Suporte"]
 
-STATUS_OPTIONS = ["Aberta", "Em andamento", "Fechada"]
+STATUS_OPTIONS = ["Aberta", "Em andamento", "Fechada", "Cancelada"]
 PRIORITY_OPTIONS = ["Baixa", "Media", "Alta"]  # manter compatível com o banco atual
 
 
@@ -370,3 +370,62 @@ def stats_by_priority(db):
     print("\nEstatísticas por prioridade:")
     for p, c in rows:
         print(f"{p}: {c}")
+
+def cancelar_solicitacao(db):
+    rows = get_requests(db)
+
+    if not rows:
+        print("Nenhuma solicitação cadastrada.")
+        return
+
+    _print_requests(
+        "Solicitações cadastradas (use o ID para cancelar):",
+        rows
+    )
+
+    valid_ids = {r[0] for r in rows}
+
+    while True:
+        request_id = ask_int(
+            "Digite o ID da solicitação que deseja cancelar: ",
+            min_value=1
+        )
+
+        if request_id in valid_ids:
+            break
+
+        print("ID inválido. Escolha um ID da lista acima.")
+
+    result = db.execute_query(
+        "SELECT status FROM requests WHERE id = %s",
+        (request_id,)
+    )
+
+    if not result:
+        print("Solicitação não encontrada.")
+        return
+
+    current_status = result[0][0]
+
+    if current_status != "Aberta":
+        print(
+            f"Não é possível cancelar uma solicitação com status "
+            f"'{current_status}'. Apenas solicitações abertas podem ser canceladas."
+        )
+        return
+
+    try:
+        db.execute_query(
+            """
+            UPDATE requests
+            SET status = %s,
+                updated_at = NOW()
+            WHERE id = %s
+            """,
+            ("Cancelada", request_id)
+        )
+
+        print("Solicitação cancelada com sucesso.")
+
+    except Exception as e:
+        print(f"Erro ao cancelar solicitação: {e}")

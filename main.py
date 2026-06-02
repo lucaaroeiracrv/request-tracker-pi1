@@ -17,6 +17,7 @@ from services import (
     stats_by_priority,
     stats_by_status,
     update_request_status,
+    cancelar_solicitacao,
 )
 
 load_dotenv()  # load environment variables from a .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
@@ -85,6 +86,7 @@ def logged_menu(user: dict) -> None:
             "[7] Atualizar status",
             "[8] Estatísticas por status",
             "[9] Estatísticas por prioridade",
+            "[10] Cancelar solicitação",
             "[0] Logout",
         ],
     )
@@ -185,6 +187,9 @@ def start_system() -> None:
                         pause()
                     elif option == "9":
                         stats_by_priority(db)
+                        pause()
+                    elif option == "10":
+                        cancelar_solicitacao(db)
                         pause()
                     elif option == "0":
                         logged_user = None
