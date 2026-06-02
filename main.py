@@ -1,59 +1,102 @@
 # main.py - Main entry point for the Request Tracker application
 import logging
 import os
+
 from dotenv import load_dotenv
+
 from database import Database, DatabaseError
 from services import (
-    register_user,
-    login_user,
     create_request,
-    list_users,
     list_requests,
-    list_requests_by_status,
     list_requests_by_priority,
+    list_requests_by_status,
     list_requests_by_user,
-    update_request_status,
-    stats_by_status,
+    list_users,
+    login_user,
+    register_user,
     stats_by_priority,
+    stats_by_status,
+    update_request_status,
+    cancelar_solicitacao,
 )
 
-load_dotenv() # load environment variables from a .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) 
+load_dotenv()  # load environment variables from a .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
 
-# configure global logging settings, defines the level, message format, and date/time.
+# Configure global logging settings: level, message format, and date/time.
 logging.basicConfig(
-    level=logging.INFO, # set the logging level to INFO, which means that all messages at this level and above (WARNING, ERROR, CRITICAL) will be logged.
-    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s" 
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
 )
 
-def get_env_or_raise(key: str) -> str: # helper function for retrieving an environment variable.
+
+def get_env_or_raise(key: str) -> str:
+    """Helper function for retrieving an environment variable, raising if missing."""
     value = os.getenv(key)
     if not value:
-        raise ValueError(f"Variável de ambiente {key} não definida.") # throws an error if the variable does not exist.
+        raise ValueError(f"Variável de ambiente {key} não definida.")
     return value
 
 
-def main_menu(): # function to display the main menu options for the user when they are not logged in.
-    print("\n===== MENU =====")
-    print("1 - Cadastrar usuário")
-    print("2 - Login")
-    print("0 - Sair")
+# ========= UI helpers =========
+def clear_screen() -> None:
+    os.system("cls" if os.name == "nt" else "clear")
 
-def logged_menu(user): # function to display the menu options for the user when they are logged in
-    print(f"\n===== LOGADO COMO {user['name']} =====")
-    print("1 - Cadastrar solicitação")
-    print("2 - Listar usuários")
-    print("3 - Listar solicitações (todas)")
-    print("4 - Listar por status")
-    print("5 - Listar por prioridade")
-    print("6 - Listar por usuário")
-    print("7 - Atualizar status")
-    print("8 - Estatísticas por status")
-    print("9 - Estatísticas por prioridade")
-    print("0 - Logout")
 
-def start_system(): # main function to start the system
+def pause(msg: str = "Pressione ENTER para continuar...") -> None:
+    input(f"\n{msg}")
+
+
+def print_box(title: str, lines: list[str], width: int = 44) -> None:
+    """Prints a simple boxed menu with a title."""
+    width = max(width, len(title) + 6, *(len(line) + 4 for line in lines))
+    border = "═" * width
+
+    print(f"╔{border}╗")
+    print(f"║ {title.center(width - 2)} ║")
+    print(f"╠{border}╣")
+    for line in lines:
+        print(f"║ {line.ljust(width - 2)} ║")
+    print(f"╚{border}╝")
+
+
+def main_menu() -> None:
+    clear_screen()
+    print_box(
+        "MENU PRINCIPAL",
+        [
+            "[1] Cadastrar usuário",
+            "[2] Login",
+            "[0] Sair",
+        ],
+    )
+
+
+def logged_menu(user: dict) -> None:
+    clear_screen()
+    username = user.get("name", "Usuário")
+    print_box(
+        f"LOGADO COMO: {username}",
+        [
+            "[1] Cadastrar solicitação",
+            "[2] Listar usuários",
+            "[3] Listar solicitações (todas)",
+            "[4] Listar por status",
+            "[5] Listar por prioridade",
+            "[6] Listar por usuário",
+            "[7] Atualizar status",
+            "[8] Estatísticas por status",
+            "[9] Estatísticas por prioridade",
+            "[10] Cancelar solicitação",
+            "[0] Logout",
+        ],
+    )
+
+
+def start_system() -> None:
+    """Main function to start the system."""
     try:
-        # create the database instance using environment variables for connection parameters, then create the necessary tables if they do not exist.
+        # Create the database instance using environment variables for connection parameters,
+        # then create the necessary tables if they do not exist.
         db = Database(
             host=get_env_or_raise("DB_HOST"),
             user=get_env_or_raise("DB_USER"),
@@ -71,6 +114,7 @@ def start_system(): # main function to start the system
             phone VARCHAR(20)
         );
         """
+
         # SQL query to create the requests table if it does not exist
         create_request_table_query = """
         CREATE TABLE IF NOT EXISTS requests (
@@ -88,57 +132,77 @@ def start_system(): # main function to start the system
         );
         """
 
-        with db:# use the database connection as a context manager
-            # ensures that the tables exist
+        # Use the database connection as a context manager
+        with db:
+            # Ensures that the tables exist
             db.execute_query(create_user_table_query)
             db.execute_query(create_request_table_query)
 
-            # stores the logged-in user (None = nobody logged in)
+            # Stores the logged-in user (None = nobody logged in)
             logged_user = None
-            while True: # main loop
-                if not logged_user: # if no user is logged in, show the main menu
+
+            while True:
+                if not logged_user:
                     main_menu()
                     option = input("Escolha: ").strip()
 
                     if option == "1":
                         register_user(db)
+                        pause()
                     elif option == "2":
                         logged_user = login_user(db)
+                        pause()
                     elif option == "0":
                         break
                     else:
                         print("Opção inválida.")
-                else: # if a user is logged in, show the logged-in menu with more options
+                        pause()
+                else:
                     logged_menu(logged_user)
                     option = input("Escolha: ").strip()
 
                     if option == "1":
                         create_request(db)
+                        pause()
                     elif option == "2":
                         list_users(db)
+                        pause()
                     elif option == "3":
                         list_requests(db)
+                        pause()
                     elif option == "4":
                         list_requests_by_status(db)
+                        pause()
                     elif option == "5":
                         list_requests_by_priority(db)
+                        pause()
                     elif option == "6":
                         list_requests_by_user(db)
+                        pause()
                     elif option == "7":
                         update_request_status(db)
+                        pause()
                     elif option == "8":
                         stats_by_status(db)
+                        pause()
                     elif option == "9":
                         stats_by_priority(db)
+                        pause()
+                    elif option == "10":
+                        cancelar_solicitacao(db)
+                        pause()
                     elif option == "0":
                         logged_user = None
                         print("Logout realizado.")
+                        pause()
                     else:
                         print("Opção inválida.")
+                        pause()
 
         logging.info("Sistema finalizado.")
     except (DatabaseError, ValueError) as error:
         logging.error(f"Erro ao iniciar o sistema: {error}")
 
-if __name__ == "__main__": # ensures that the system will only start if this file is executed directly.
+
+if __name__ == "__main__":
     start_system()
