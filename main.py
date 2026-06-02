@@ -15,6 +15,7 @@ from services import (
     update_request_status,
     stats_by_status,
     stats_by_priority,
+    cancelar_solicitacao,
 )
 
 load_dotenv() # load environment variables from a .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) 
@@ -49,6 +50,7 @@ def logged_menu(user): # function to display the menu options for the user when 
     print("7 - Atualizar status")
     print("8 - Estatísticas por status")
     print("9 - Estatísticas por prioridade")
+    print("10 - Cancelar solicitação")
     print("0 - Logout")
 
 def start_system(): # main function to start the system
@@ -130,6 +132,12 @@ def start_system(): # main function to start the system
                         stats_by_status(db)
                     elif option == "9":
                         stats_by_priority(db)
+                    elif option == "10":
+                        id_chamado = input("Digite o ID do chamado a cancelar: ").strip()
+                        if id_chamado.isdigit():
+                            cancelar_solicitacao(db, int(id_chamado))
+                        else:
+                            print("ID do chamado inválido. Digite um número.")
                     elif option == "0":
                         logged_user = None
                         print("Logout realizado.")

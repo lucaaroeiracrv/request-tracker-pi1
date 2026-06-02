@@ -199,6 +199,37 @@ def list_requests_by_status(db): # lists requests filtered by status
         print(f"{r[0]} | {r[1]} | {r[2]} | {r[4]} | {r[5]} | {r[6]}")
 
 
+def cancelar_solicitacao(db, request_id): # cancels a request if its status is 'Aberta'
+    # retrieve the current status of the request
+    query = "SELECT status FROM requests WHERE id = %s"
+    result = db.execute_query(query, (request_id,))
+
+    # check if request exists
+    if not result:
+        print(f"Solicitação com ID {request_id} não encontrada.")
+        return
+
+    current_status = result[0][0]
+
+    # check if status is different from 'Aberta'
+    if current_status != "Aberta":
+        print(f"Não é possível cancelar uma solicitação com status '{current_status}'. Apenas solicitações 'Aberta' podem ser canceladas.")
+        return
+
+    # update the request status to 'Cancelada' and set updated_at to NOW()
+    update_query = """
+        UPDATE requests
+        SET status = %s, updated_at = NOW()
+        WHERE id = %s
+    """
+
+    try:
+        db.execute_query(update_query, ("Cancelada", request_id))
+        print(f"Solicitação {request_id} foi cancelada com sucesso.")
+    except Exception as e:
+        print(f"Erro ao cancelar solicitação: {e}")
+
+
 def list_requests_by_priority(db): # lists requests filtered by priority
     priority = input("Prioridade (Baixa/Média/Alta): ").strip().title()
     if priority not in ["Baixa", "Media", "Alta"]:
