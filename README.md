@@ -35,10 +35,14 @@ O objetivo do sistema é **centralizar, organizar e controlar todas as solicita�
 
 # Tecnologias Utilizadas
 
-* **Python**Linguagem principal utilizada para o desenvolvimento de toda a lógica de negócios, validações de dados e interface via linha de comando (CLI).
-* **MySQL**Sistema Gerenciador de Banco de Dados (SGBD) relacional encarregado da persistência segura, consistência e integridade de todos os dados do sistema
-* **Git e GitHub**Ferramentas essenciais para o controle de versão do código e cooperação em equipe
-* **Trello** Plataforma utilizada para a gestão, divisão de tarefas do projeto através de um quadro Kanban e mapeamento de sprints.
+* **Python** - Linguagem principal utilizada para o desenvolvimento de toda a lógica de negócios, validações de dados e interface via linha de comando (CLI).
+* **MySQL** - Sistema Gerenciador de Banco de Dados (SGBD) relacional encarregado da persistência segura, consistência e integridade de todos os dados do sistema
+* **Git e GitHub** - Ferramentas essenciais para o controle de versão do código e cooperação em equipe
+* **Trello** - Plataforma utilizada para a gestão, divisão de tarefas do projeto através de um quadro Kanban e mapeamento de sprints.
+* **Flask** - Micro-framework web em Python, projetado para criar sites e APIs de forma rápida e com código enxuto, interligando-o com o front-end
+* **Front-End**:
+*   **HTML** - Linguagem que estrutura o conteúdo do site, como os texto, imagens, parágrafos, links e tabelas.
+*   **CSS** - É responsável pela a parte estética e de design. Define o estilo do site tornando-o visualmente atraente e responsivo.
 
 
 ## Regras de Prioridade
@@ -62,7 +66,7 @@ Integridade referencial e restrições:
 
 * `users.email` é único
 * `requests.user_id` é FK para `users(id)` com `ON DELETE CASCADE`
-* `status` usa valores: "Aberta", "Em andamento", "Fechada"
+* `status` usa valores: "Aberta", "Em andamento", "Fechada" e "Cancelada"
 * `priority` usa valores: "Baixa", "Media", "Alta"
 
 
@@ -115,7 +119,7 @@ git clone https://github.com/seu-usuario/seu-repositorio.git
 
 ---
 
-## 2️ -  Entrar na pasta do projeto
+## 2 -  Entrar na pasta do projeto
 
 ```bash
 cd request-tracker-pi1
@@ -123,7 +127,7 @@ cd request-tracker-pi1
 
 ---
 
-## 3️ - Instalar as dependências
+## 3 - Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
@@ -131,13 +135,13 @@ pip install -r requirements.txt
 
 ---
 
-## 4️ - Configurar as variáveis de ambiente
+## 4 - Configurar as variáveis de ambiente
 
 Crie o arquivo `.env` baseado no `.env.example` e configure as credenciais do banco de dados.
 
 ---
 
-## 5️ - Executar o sistema
+## 5 - Executar o sistema
 
 ```bash
 python main.py
@@ -170,7 +174,7 @@ Funcionalidades atualmente implementadas e testadas:
 * Cadastro de usuários com validação de email e hashing de senha (bcrypt)
 * Login com verificação de senha hasheada
 * Registro de solicitações com categoria, urgência, impacto, prioridade automática e status
-* Consulta de solicitações por status, prioridade e usuário
+* Consulta de solicitações por status, prioridade, usuário e termo
 * Atualização controlada de status com regras de transição
 * Estatísticas (COUNT + GROUP BY) por status e prioridade
 * Integridade referencial com FK e CASCADE
@@ -185,6 +189,7 @@ Foram realizados testes de consistência para validar o funcionamento do sistema
 - Cadastro de usuário
 - Login de usuário
 - Abertura de solicitação
+- Cancelamento de solicitação
 - Cálculo automático de prioridade
 - Atualização de status
 - Consultas/listagens
