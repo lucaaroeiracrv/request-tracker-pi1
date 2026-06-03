@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Pesquisar Solicitações</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+        <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+
+        <section class="card">
+            <h2>Pesquisar Solicitações</h2>
+            <form method="POST">
+                <label>Digite uma palavra-chave</label>
+                <input type="text" name="termo" placeholder="Ex: internet" required>
+
+                <button type="submit" class="btn-blue">Pesquisar</button>
+                <button onclick="history.back()" class="btn-red">Voltar</button>
+            </form>
+            {% if mensagem %}
+            <div class="mensagem-erro">
+                {{ mensagem }}
+            </div>
+            {% endif %}
+        </section>
+
+        {% if requests %}
+
+        <div class="table-container">
+
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Categoria</th>
+                    <th>Descrição</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                </tr>
+
+                {% for r in requests %}
+
+                <tr>
+                    <td>{{ r[0] }}</td>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3] }}</td>
+                    <td>{{ r[4] }}</td>
+                    <td>{{ r[5] }}</td>
+                </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>

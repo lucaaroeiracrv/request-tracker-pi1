@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Solicitações por Usuário</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+        <div class="table-container">
+            <h2>Usuários</h2>
+
+            {% for user in users %}
+                <h3>{{ user }}</h3>
+                <br>
+            {% endfor %}
+            <button onclick="history.back()" class="btn-red">Voltar</button>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Controle de Solicitações Corporativas</title>
+  <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+  <header class="site-header">
+
+    <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+    <br>
+    <nav class="navbar">
+      <ul class="menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login-page">Login</a></li>
+        <li><a href="/cadastro">Cadastre-se</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main>
+
+    <section class="home-card">
+      <h2>Bem-vindo ao SCSC! {{name}}</h2>
+    </section>
+    <br><br>
+    <section class="banner">
+      <center>
+        <img src="{{ url_for('static', filename='img/banner.png') }}" class="banner-img">
+      </center>
+    </section>
+    <br><br><br>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+  </footer>
+
+</body>
+</html>

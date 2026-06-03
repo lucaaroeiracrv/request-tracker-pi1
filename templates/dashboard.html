@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SCSC - Dashboard</title>
+  <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+    <br>
+    <nav class="navbar">
+      <ul class="menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  {% if success_message %}
+  <div id="success-alert" class="success-alert">
+      {{ success_message }}
+  </div>
+  {% endif %}
+
+  <main class="centered">
+
+    <section class="card dashboard-card">
+      <h2>Painel do Sistema</h2>
+
+      <form action="/redirecionar-opcao" method="POST">
+        <label>Escolha uma opção</label>
+          <select name="opcao" required>
+
+          <option value="">
+            Selecione
+          </option>
+
+          <option value="1">
+            Cadastrar solicitação
+          </option>
+
+          <option value="2">
+              Listar usuários
+          </option>
+
+          <option value="3">
+            Listar solicitações
+          </option>
+
+          <option value="4">
+            Listar por status
+          </option>
+
+          <option value="5">
+            Listar por prioridade
+          </option>
+
+          <option value="6">
+            Listar por usuário
+          </option>
+
+          <option value="7">
+            Atualizar status
+          </option>
+
+          <option value="8">
+            Pesquisar Solicitações
+          </option>
+
+          <option value="9">
+            Cancelar Solicitação
+          </option>
+
+          <option value="10">
+            Estatísticas por status
+          </option>
+
+          <option value="11">
+            Estatísticas por prioridade
+          </option>
+
+          </select>
+          <button type="submit" class="btn-blue">Confirmar Escolha</button>
+
+      </form>
+      <button onclick="history.back()" class="btn-red">Voltar</button>
+    </section>
+  </main>
+
+
+  <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+  </footer>
+
+</body>
+</html>

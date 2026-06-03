@@ -1,3 +1,4 @@
+'''
 # main.py - Main entry point for the Request Tracker application
 import logging
 import os
@@ -206,3 +207,4 @@ def start_system() -> None:
 
 if __name__ == "__main__":
     start_system()
+'''

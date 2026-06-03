@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Listar por Status</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="listar-page">
+
+        <button onclick="history.back()" class="btn-voltar">Voltar</button>
+        <div class="title-column">
+            <h2>Em Aberto</h2>
+            <div class="cards-container">
+                {% for r in abertas %}
+                <div class="request-card">
+                    <p><strong>ID:</strong> {{ r[0] }}</p>
+                    <p><strong>Usuário:</strong> {{ r[1] }}</p>
+                    <p><strong>Categoria:</strong> {{ r[2] }}</p>
+                    <p><strong>Descrição:</strong> {{ r[3] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="title-column">
+            <h2>Em Andamento</h2>
+            <div class="cards-container">
+                {% for r in andamento %}
+                    <div class="request-card">
+                        <p><strong>ID:</strong> {{ r[0] }}</p>
+                        <p><strong>Usuário:</strong> {{ r[1] }}</p>
+                        <p><strong>Categoria:</strong> {{ r[2] }}</p>
+                        <p><strong>Descrição:</strong> {{ r[3] }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="title-column">
+            <h2>Finalizadas</h2>
+
+            <div class="cards-container">
+                {% for r in finalizadas %}
+                    <div class="request-card">
+                        <p><strong>ID:</strong> {{ r[0] }}</p>
+                        <p><strong>Usuário:</strong> {{ r[1] }}</p>
+                        <p><strong>Categoria:</strong> {{ r[2] }}</p>
+                        <p><strong>Descrição:</strong> {{ r[3] }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="title-column">
+            <h2>Canceladas</h2>
+            <div class="cards-container">
+                {% for r in canceladas %}
+                <div class="request-card">
+                    <p><strong>ID:</strong> {{ r[0] }}</p>
+                    <p><strong>Usuário:</strong> {{ r[1] }}</p>
+                    <p><strong>Categoria:</strong> {{ r[2] }}</p>
+                    <p><strong>Descrição:</strong> {{ r[3] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>
