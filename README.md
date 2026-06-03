@@ -41,8 +41,8 @@ O objetivo do sistema é **centralizar, organizar e controlar todas as solicita�
 * **Trello** - Plataforma utilizada para a gestão, divisão de tarefas do projeto através de um quadro Kanban e mapeamento de sprints.
 * **Flask** - Micro-framework web em Python, projetado para criar sites e APIs de forma rápida e com código enxuto, interligando-o com o front-end
 * **Front-End**:
-*   **HTML** - Linguagem que estrutura o conteúdo do site, como os texto, imagens, parágrafos, links e tabelas.
-*   **CSS** - É responsável pela a parte estética e de design. Define o estilo do site tornando-o visualmente atraente e responsivo.
+   **HTML** - Linguagem que estrutura o conteúdo do site, como os texto, imagens, parágrafos, links e tabelas.
+   **CSS** - É responsável pela a parte estética e de design. Define o estilo do site tornando-o visualmente atraente e responsivo.
 
 
 ## Regras de Prioridade
