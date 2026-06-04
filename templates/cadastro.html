@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"content="width=device-width,initial-scale=1">
+  <title>SCSC - Cadastro</title>
+  <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet"href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/login-page">Login</a></li>
+                <li><a href="/cadastro">Cadastre-se</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+
+        <section class="card auth-card">
+            <h2>Cadastro</h2>
+            <form action="/register" method="POST" autocomplete="off">
+
+                <label for="nome">Nome Completo</label>
+                <input id="nome" name="nome" type="text" required>
+
+                <label for="email">E-mail</label>
+                <input type="email" name="email" pattern=".+@gmail\.com" title="Digite um endereço Gmail válido"required>
+
+                <label for="tel">Telefone (Opcional)</label>
+                <input id="tel" name="tel" type="tel">
+
+                <label for="senha">Senha</label>
+                <input id="senha" name="senha" type="password" required minlength="6">
+
+                <button type="submit" class="btn-blue">Cadastrar</button>
+                <button onclick="history.back()" class="btn-red">Cancelar</button>
+                <div class="links">
+                    <a href="/login-page">Já tenho uma conta! Ir para Login</a>
+                </div>
+
+            </form>
+
+            {% if message %}
+                <p class="success-message">
+                    {{ message }}
+                </p>
+            {% endif %}
+
+            {% if error %}
+                <p>{{ error }}</p>
+            {% endif %}
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>

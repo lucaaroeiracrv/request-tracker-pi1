@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SCSC - Login</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/login-page">Login</a></li>
+                <li><a href="/cadastro">Cadastre-se</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+
+        <section class="card auth-card">
+            <h2>Login</h2>
+            <form action="/login" method="POST" autocomplete="off">
+
+                <label for="email">E-mail</label>
+                <input id="email" name="email" type="email" required>
+
+                <label for="password">Senha</label>
+                <input id="password" name="password" type="password" required>
+
+                <button type="submit" class="btn-blue">Entrar</button>
+                <button onclick="history.back()" class="btn-red">Voltar</button>
+
+                <div class="links">
+                    <a href="/cadastro">Não tem uma conta? Crie uma</a>
+                </div>
+
+            </form>
+
+            {% if error %}
+            <p>{{ error }}</p>
+            {% endif %}
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>
