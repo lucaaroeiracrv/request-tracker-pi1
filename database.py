@@ -1,3 +1,4 @@
+'''
 # database.py - Database management for the Request Tracker application
 import logging
 from typing import Any, Iterable, Optional
@@ -70,4 +71,162 @@ class Database: # class to manage database connections and queries
         return self
 
     def __exit__(self, exc_type, exc, tb): # when exiting the 'with' block, whether an exception occurred or not, the database connection will be closed by calling
+        self.disconnect()
+'''
+
+import logging # Biblioteca utilizada para registrar mensagens de erro e execução
+from typing import Any, Iterable, Optional # Tipagem utilizada para melhorar a legibilidade do código
+import mysql.connector # Biblioteca responsável pela conexão com o MySQL
+from mysql.connector import ( # Importação de classes específicas do mysql.connector
+    Error,
+    MySQLConnection
+)
+
+# CONFIGURAÇÃO DO LOGGER
+logger = logging.getLogger(__name__) # O logger permite registrar informações, avisos e erros durante a execução do sistema.
+
+# EXCEÇÃO PERSONALIZADA
+class DatabaseError(Exception):
+    """
+    Exceção personalizada para erros relacionados ao banco.
+    Utilizada para tornar as mensagens de erro mais claras.
+    """
+    pass
+
+# CLASSE DATABASE
+class Database:
+
+    # CONSTRUTOR
+    def __init__(
+        self,
+        host: str,
+        user: str,
+        password: str,
+        database: str
+    ):
+
+        # Dados necessários para conexão com o MySQL
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+
+        # Inicialmente não existe conexão ativa
+        self.connection: Optional[MySQLConnection] = None
+
+    # CONECTAR AO BANCO
+    def connect(self):
+        try:
+            # Cria a conexão com o banco
+            self.connection = mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database
+            )
+
+            # Verifica se a conexão foi realizada
+            if self.connection.is_connected():
+                logger.info(
+                    "Conexão com o banco realizada com sucesso."
+                )
+
+            else:
+                raise DatabaseError(
+                    "Não foi possível conectar ao banco."
+                )
+
+        except Error as error:
+            logger.exception(
+                "Erro ao conectar ao MySQL."
+            )
+
+            raise DatabaseError(
+                str(error)
+            ) from error
+
+    # DESCONECTAR DO BANCO
+    def disconnect(self):
+        # Fecha a conexão somente se ela existir
+        if (
+            self.connection
+            and
+            self.connection.is_connected()
+        ):
+            self.connection.close()
+            logger.info(
+                "Conexão com o banco encerrada."
+            )
+
+    # EXECUTAR QUERIES SQL
+    def execute_query(
+        self,
+        query: str,
+        values: Optional[Iterable[Any]] = None
+    ):
+        # Verifica se existe conexão ativa
+        if (
+            not self.connection
+            or
+            not self.connection.is_connected()
+        ):
+
+            raise DatabaseError(
+                "Banco de dados desconectado."
+            )
+
+        # Cria um cursor para executar comandos SQL
+        cursor = self.connection.cursor()
+
+        try:
+
+            # Executa a query
+            cursor.execute(
+                query,
+                values
+            )
+
+            # CONSULTAS SELECT
+            if query.strip().upper().startswith("SELECT"):
+                return cursor.fetchall()
+
+            # INSERT / UPDATE / DELETE
+            self.connection.commit()
+
+            logger.info(
+                "Query executada com sucesso."
+            )
+            return None
+
+        except Error as error:
+
+            logger.exception(
+                "Erro ao executar query."
+            )
+
+            raise DatabaseError(
+                str(error)
+            ) from error
+
+        finally:
+            # Fecha o cursor independentemente do resultado
+            cursor.close()
+
+    # CONTEXT MANAGER
+    def __enter__(self):
+
+        # Permite utilizar:
+        # with Database(...) as db:
+        #     ...
+        self.connect()
+
+        return self
+
+    def __exit__(
+        self,
+        exc_type,
+        exc_value,
+        traceback
+    ):
+        # Fecha automaticamente a conexão ao sair do bloco
         self.disconnect()
