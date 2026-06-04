@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Estatísticas</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+    <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+    <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+        <div class="table-container">
+            <h2>Estatísticas por Prioridade</h2>
+
+            <table>
+                <tr>
+                    <th>Prioridade</th>
+                    <th>Total</th>
+                </tr>
+
+                <!-- FOR do Jinja2 - percorre todos os dados enviados pelo Flask -->
+                {% for p in stats %}
+
+                <tr>
+                    <td>{{ p[0] }}</td> <!-- s[0] = status Exemplo: Em aberto -->
+                    <td>{{ p[1] }}</td> <!-- s[1] = quantidade -->
+                </tr>
+
+                {% endfor %}
+            </table>
+            <button onclick="history.back()" class="btn-red">Voltar</button>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Solicitações</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Categoria</th>
+                    <th>Descrição</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+
+                {% for request in requests %}
+
+                <tr>
+                    <td>{{ request[0] }}</td>
+                    <td>{{ request[1] }}</td>
+                    <td>{{ request[2] }}</td>
+                    <td>{{ request[3] }}</td>
+                    <td>{{ request[4] }}</td>
+                    <td>{{ request[5] }}</td>
+                    <td>{{ request[6] }}</td>
+                </tr>
+
+                {% endfor %}
+            </table>
+
+            <button onclick="history.back()" class="btn-red">Voltar</button>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+    
+</body>
+</html>

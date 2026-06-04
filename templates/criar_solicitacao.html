@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSC - Criar Solicitação</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">Sistema de Controle de Solicitações Corporativas</h1>
+        <br>
+        <nav class="navbar">
+            <ul class="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered">
+        <section class="card">
+            <h2>Nova Solicitação</h2>
+
+            <div class="usuario-logado">
+                <strong>Solicitante:</strong>
+                {{ user_name }}
+            </div>
+
+            <form action="/salvar-solicitacao" method="POST">
+                <label>Categoria</label>
+
+                <select name="categoria">
+                    <option>TI</option>
+                    <option>RH</option>
+                    <option>Financeiro</option>
+                    <option>Infraestrutura</option>
+                    <option>Suporte</option>
+                </select>
+
+                <label>Descrição</label>
+                <textarea name="descricao" required></textarea>
+
+                <label>Urgência (1-5)</label>
+                <input type="number" name="urgencia" min="1" max="5" required>
+
+                <label>Impacto (1-5)</label>
+                <input type="number" name="impacto" min="1" max="5" required>
+
+                <button type="submit" class="btn-blue">Criar Solicitação</button>
+                <button onclick="history.back()" class="btn-red">Cancelar</button>
+
+                {% if message %}
+                <p class="success-message">
+                    {{ message }}
+                </p>
+                {% endif %}
+            </form>
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 PUCCAMP - Sistema de Controle de Solicitações Corporativas</p>
+    </footer>
+
+</body>
+</html>
