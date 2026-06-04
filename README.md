@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat\&logo=python\&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=flat\&logo=mysql\&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-ff9800?style=flat)
+![Status](https://img.shields.io/badge/Status-Finalizado-brightgreen)
 ![Academic Project](https://img.shields.io/badge/Project-Academic-blue?style=flat)
 
 ---
