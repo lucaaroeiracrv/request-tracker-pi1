@@ -237,7 +237,7 @@ pip install -r requirements.txt
 pip install mysql-connector-python
 pip install bcrypt
 pip install python-dotenv
-``
+```
 ---
 
 ## 5 - Configurar as variáveis de ambiente
